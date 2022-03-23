@@ -1,0 +1,72 @@
+@use '../../theme';
+
+.sidebar {
+  background-color: theme.$primary;
+  color: theme.$white;
+
+  width: 20%;
+  min-width: 200px;
+  max-width: 260px;
+
+  padding: 40px 24px;
+}
+
+.sidebar-header {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+
+  b {
+    color: white;
+  }
+
+  img {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+.rooms {
+  & > header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    margin-bottom: 12px;
+
+    b,
+    button {
+      color: white;
+    }
+  }
+
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+
+  margin-top: 24px;
+}
+
+.room {
+  margin-left: 16px;
+
+  color: white;
+
+  user-select: none;
+
+  filter: brightness(1);
+
+  &[aria-current='false'] {
+    filter: brightness(0.8);
+  }
+
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1);
+  }
+  &:active {
+    filter: brightness(0.7);
+  }
+}

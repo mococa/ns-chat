@@ -1,0 +1,22 @@
+{
+  "name": "ns-chat",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nullstack": "~0.14.0"
+  },
+  "scripts": {
+    "start": "npx nullstack start",
+    "prod": "node .production/server.js",
+    "dev": "node .development/server.js",
+    "build": "npx nullstack build --mode=ssr"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
+    "uuid": "^8.3.2"
+  }
+}

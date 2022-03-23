@@ -1,0 +1,90 @@
+@use '../../theme';
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.signup-form {
+  height: 100%;
+  background: theme.$primary;
+
+  & > * {
+    max-width: 200px;
+    animation: fade-in 2800ms ease forwards;
+  }
+
+
+  display: flex;
+  flex-flow: column;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+
+  span {
+    order: 1;
+    text-align: center;
+    opacity: 0;
+    transition: 200ms;
+    font-weight: 600;
+    color: white;
+    animation: none;
+  }
+
+  img {
+    width: 200px;
+    height: 200px;
+
+    border-radius: 50%;
+    background: theme.$white;
+
+    position: relative;
+
+    cursor: pointer;
+
+    order: 2;
+
+    &::after {
+      content: 'Click to generate another avatar';
+      color: blue;
+      font-size: 2rem;
+      z-index: 3;
+    }
+    &:hover ~ span {
+      opacity: 1;
+    }
+  }
+
+  a {
+    text-decoration: underline;
+    order: 5;
+  }
+
+  input {
+    order: 3;
+  }
+
+  button {
+    order: 4;
+
+    padding: 12px;
+
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(90%);
+    }
+
+    &:active {
+      filter: brightness(80%);
+    }
+  }
+}

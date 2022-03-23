@@ -1,0 +1,14 @@
+@use '../../theme';
+
+.chat-container {
+  display: flex;
+  flex-flow: column;
+
+  padding: 12px 16px;
+
+  height: 100%;
+  width: 100%;
+  flex: 1;
+
+  background-color: theme.$background;
+}

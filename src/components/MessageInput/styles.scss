@@ -1,0 +1,67 @@
+@use '../../theme' as *;
+
+.message-input-container {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+
+  margin-top: auto;
+
+  height: 50px;
+
+  padding: 4px 36px 4px 0;
+
+  background: $white;
+
+  border-radius: 12px;
+
+  box-shadow: 0px 2px 4px rgba(100, 100, 100, 0.5);
+
+  input {
+    flex: 1;
+
+    padding: 12px 0 12px 16px;
+    margin-left: 2px;
+
+    border: none;
+    outline: none;
+
+    font-size: 1rem;
+
+    background: $white;
+  }
+
+  audio {
+    height: auto;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex: 0.125;
+
+  gap: 4px;
+
+  input {
+    display: none;
+  }
+
+  span {
+    place-self: center;
+  }
+
+  &.with-audio :first-child::after {
+    content: 'x';
+    position: absolute;
+    bottom: 3px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    color: white;
+    background: red;
+  }
+  & > :last-child {
+    margin-left: auto;
+  }
+}
