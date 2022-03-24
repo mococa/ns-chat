@@ -14,9 +14,15 @@ This is a fullstack chat application. It's still under development and I've been
   - socket.io
   - socket.io-client
 
+#### Hosting
+  - This project is currently hosted on [Replit](https://replit.com)
+  - Registered name on freenom
+  - Configured on cloudflare
+
+
 #### Cool stuff
 
-Uploads and voice recordings work and are uploaded on transfer.sh, with [this little thing](https://github.com/mococa/transfer-uploader)
+Uploads and voice recordings work and are uploaded on transfer.sh, with [this little thing](https://github.com/mococa/transfer-upload)
 
 ### Why
 
@@ -42,14 +48,14 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 To build, due to PurgeCSS plugin, go to `/node_modules/nullstack/webpack.config.js` and comment these lines:
 
 ```js
-  if (argv.environment === 'production') {
-    plugins.push(new PurgecssPlugin({
-      paths: glob.sync(`src/**/*`, { nodir: true }),
-      content: ['./**/*.njs'],
-      safelist: ['script', 'body', 'html', 'style'],
-      defaultExtractor: content => content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [],
-    }));
-  }
+if (argv.environment === 'production') {
+  plugins.push(new PurgecssPlugin({
+    paths: glob.sync(`src/**/*`, { nodir: true }),
+    content: ['./**/*.njs'],
+    safelist: ['script', 'body', 'html', 'style'],
+    defaultExtractor: content => content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [],
+  }));
+}
 ```
 
 (Line ~225)
