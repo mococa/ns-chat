@@ -27,10 +27,6 @@ class MessageInput extends Nullstack {
     uploadingFile: false,
   };
 
-  async hydrate({ self }) {
-    self.element.querySelector('input').focus();
-  }
-
   handleOnChange({ event }) {
     this.state.value = event.target.value;
     //if (this.value) this.onType({ value: this.value });
@@ -103,6 +99,7 @@ class MessageInput extends Nullstack {
         onkeyup={this.handleOnSubmit}
         value={this.state.value}
         placeholder="Type something to send"
+        autofocus
       />
     );
   }
@@ -135,7 +132,6 @@ class MessageInput extends Nullstack {
           {this.state.recording ? <Stop /> : <Mic />}
         </RoundButton>
         <input type="file" id="file-upload" onchange={this.handleUpload} />
-        {this.state.file && <span>{this.state.file.name.slice(0, 10)}...</span>}
         <RoundButton
           onclick={() => {
             document.querySelector('#file-upload').click();
@@ -182,6 +178,7 @@ class MessageInput extends Nullstack {
             type="audio/mpeg"
           />
         )}
+        {this.state.file && <span>{this.state.file.name.slice(0, 10)}...</span>}
         <ActionButtons />
       </div>
     );

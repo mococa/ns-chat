@@ -1,6 +1,7 @@
 import Nullstack from 'nullstack';
 import { Server } from 'socket.io';
 import io from 'socket.io-client';
+import { v4 } from 'uuid';
 import { createAvatar } from '../../helpers/createAvatar';
 
 // Components
@@ -25,6 +26,7 @@ class Chat extends Nullstack {
       },
       data: messageData,
       at: String(new Date()),
+      id: v4()
     });
 
     messageList.push(payload(true));

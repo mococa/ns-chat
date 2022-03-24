@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 // Components
 import Chat from '../../components/Chat';
 import Sidebar from '../../components/Sidebar';
-import { createWebsocketsServer } from '../../helpers/createWsServer';
+import { mapMessages } from '../../helpers/mapMessages';
 
 // Styles
 import './styles.scss';
@@ -29,12 +29,12 @@ class ChatsPage extends Nullstack {
     this.state.messageList = [];
     this.state.selectedRoom = room;
 
-    const socket = this.state.socket;
-
-    socket.emit('join room', room);
+    const socket = this.state.socket || io('http://192.168.0.2:3000');
 
     socket.on('new message', (message) => {
-      this.state.messageList.push(message);
+      if (this.state.messageList.map(({ id }) => id).includes(message.id)) return;
+
+      this.state.messageList = [...this.state.messageList, message];
     });
 
     socket.on('new room', (roomName) => {
@@ -47,15 +47,17 @@ class ChatsPage extends Nullstack {
 
     await this.joinRoom({ roomName: room });
     window.history.pushState(room, 'Chat', `/chat/${room}`);
+
+    socket.emit('join room', this.state.selectedRoom);
+
+    this.state.socket = socket;
   }
 
-  initiate({ params }) {
+  async initiate({ params }) {
     this.state.selectedRoom = params.room;
   }
 
   async hydrate() {
-    const socket = io('http://localhost:3000');
-    this.state.socket = socket;
     const rooms = await this.getRooms();
     this.state.rooms = rooms;
     await this.clientJoinRoom({ room: this.state.selectedRoom });
@@ -74,20 +76,20 @@ class ChatsPage extends Nullstack {
 
       socket.on('join room', (room) => {
         socket.join(room);
-        socket.emit(
-          'joined',
-          context.messageList[room]?.map((message) => {
-            if (message.author.name === socket.id) message.author.name = 'Me';
-            return message;
-          }) || []
-        );
+        socket.room = room;
+        socket.emit('joined', mapMessages(context.messageList, room, socket.id));
       });
 
       socket.on('create room', (room) => {
         socket.broadcast.emit('new room', room);
+        socket.join(room);
+        socket.room = room;
+        socket.emit('joined', mapMessages(context.messageList, room, socket.id));
       });
 
       socket.on('send message', ({ message, room }) => {
+        if (!message) return console.log('no message to push')
+        if (!room) return console.log('no room to send message')
         context.messageList[room].push(message);
         socket.to(room).emit('new message', message);
       });
@@ -128,9 +130,9 @@ class ChatsPage extends Nullstack {
         <Chat
           username={this.state.socket?.id}
           messageList={this.state.messageList}
-          onSendChat={(payload) => {
-            this.state.socket.emit(`send message`, {
-              message: payload,
+          onSendChat={(message) => {
+            this.state.socket.emit('send message', {
+              message,
               room: this.state.selectedRoom,
             });
           }}
