@@ -26,11 +26,12 @@ class ChatsPage extends Nullstack {
     this.state.socket?.close();
   }
 
-  async clientJoinRoom({ room }) {
+  async clientJoinRoom({ room, environment }) {
     this.state.messageList = [];
     this.state.selectedRoom = room;
 
-    const socket = this.state.socket || io('http://192.168.0.2:3000');
+    const { production } = environment;
+    const socket = this.state.socket || io(production ? 'https://nschat.ml/' : 'http://192.168.0.2:3000');
 
     socket.on('new message', (message) => {
       if (this.state.messageList.map(({ id }) => id).includes(message.id)) return;
