@@ -86,3 +86,36 @@
     filter: brightness(0.7);
   }
 }
+
+.text-button {
+  background: transparent;
+
+  border: none;
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  font-weight: 600;
+  color: white;
+  text-align: start;
+
+  transition: 150ms;
+
+  padding: 12px;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:active {
+    filter: brightness(0.9);
+  }
+}
+
+.create-secret-room-button {
+  margin-top: 12px;
+}
+
+.logout {
+  margin-top: 90%;
+}

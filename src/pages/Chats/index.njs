@@ -96,8 +96,8 @@ class ChatsPage extends Nullstack {
         socket.emit('joined', mapMessages(context.messageList, room, socket.id));
       });
 
-      socket.on('create room', (room) => {
-        socket.broadcast.emit('new room', room);
+      socket.on('create room', (room, secret) => {
+        if (!secret) socket.broadcast.emit('new room', room);
         socket.join(room);
         socket.room = room;
         socket.emit('joined', mapMessages(context.messageList, room, socket.id));
@@ -128,10 +128,12 @@ class ChatsPage extends Nullstack {
     await this.clientJoinRoom({ room });
   }
 
-  async handleCreateRoom({ roomName }) {
-    const rooms = await this.createRoom({ roomName });
-    this.state.rooms = rooms;
-    this.state.socket.emit('create room', roomName);
+  async handleCreateRoom({ roomName, secret = false }) {
+    if(!secret){
+      const rooms = await this.createRoom({ roomName });
+      this.state.rooms = rooms;
+    }
+    this.state.socket.emit('create room', roomName, secret);
     await this.clientJoinRoom({ room: roomName });
   }
 

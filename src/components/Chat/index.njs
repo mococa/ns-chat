@@ -29,7 +29,7 @@ class Chat extends Nullstack {
     const payload = (local) => ({
       author: {
         name: local ? 'Me' : user?.nickname || JSON.parse(sessionStorage.getItem('user')).nickname,
-        img: user?.avatar || JSON.parse(sessionStorage.getItem('user')).avatar,
+        img: createAvatar(user?.avatar) || createAvatar(JSON.parse(sessionStorage.getItem('user')).avatar),
       },
       data: messageData,
       at: String(new Date()),

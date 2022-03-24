@@ -18,8 +18,7 @@ class Home extends Nullstack {
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
-      avatar: `https://avatars.dicebear.com/api/adventurer/${this.state.avatars[this.state.selectedAvatarIndex]
-        }.svg?scale=90&translateY=4`,
+      avatar: this.state.avatars[this.state.selectedAvatarIndex],
     };
 
     sessionStorage.setItem('user', JSON.stringify(values));
