@@ -18,6 +18,8 @@ body {
   color: #fff;
   font-size: 1rem;
 
+  background-color: theme.$background;
+
   height: 100vh;
 
   & > #application {
@@ -25,6 +27,11 @@ body {
 
     & > main {
       height: inherit;
+      max-width: 1920px;
+
+      outline: 1px solid theme.$background500;
+
+      margin: auto;
     }
   }
 }
