@@ -10,9 +10,9 @@ class Sidebar extends Nullstack {
     if (roomName) onCreateRoom({ roomName });
   }
 
-  render({ selectedRoom, rooms, onChangeRoom, onCreateRoom }) {
+  render({ selectedRoom, rooms, onChangeRoom, onCreateRoom, drawerOpen, onCloseDrawer }) {
     return (
-      <aside class="sidebar">
+      <aside class="sidebar" aria-hidden={String(!drawerOpen)} onclick={onCloseDrawer}>
         <header class="sidebar-header">
           <img src={createAvatar('')} />
           <b>MyKewlNickname</b>

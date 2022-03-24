@@ -9,6 +9,22 @@
   max-width: 260px;
 
   padding: 40px 24px;
+
+  @media (max-width: 600px) {
+    position: fixed;
+    left: 0px;
+
+    height: 100vh;
+    width: 260px;
+
+    transition: 300ms;
+
+    z-index: 1;
+
+    &[aria-hidden='true'] {
+      left: -260px;
+    }
+  }
 }
 
 .sidebar-header {

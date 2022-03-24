@@ -9,7 +9,10 @@ class Home extends Nullstack {
   avatars = [v4()];
   selectedAvatarIndex = 0;
 
-  handleSubmit({ event }) {
+  static async handleLogin(ctx) {
+  }
+
+  async handleSubmit({ event, router }) {
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
@@ -17,6 +20,9 @@ class Home extends Nullstack {
         this.selectedAvatarIndex
       )}.svg?scale=90&translateY=4`,
     };
+
+    await this.handleLogin({ values });
+    router.path = '/chat/General'
   }
 
   handleGenerateAvatar() {
@@ -38,9 +44,9 @@ class Home extends Nullstack {
           onclick={this.handleGenerateAvatar}
           src={`https://avatars.dicebear.com/api/adventurer/${this.avatars.at(
             this.selectedAvatarIndex
-            )}.svg?scale=90&translateY=4`}
-            />
-            <span>Click to generate a new avatar</span>
+          )}.svg?scale=90&translateY=4`}
+        />
+        <span>Click to generate a new avatar</span>
         {this.selectedAvatarIndex > 0 && (
           <a href="#" onclick={this.handlePreviousAvatar}>
             Previous avatar

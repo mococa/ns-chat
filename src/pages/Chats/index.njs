@@ -18,6 +18,7 @@ class ChatsPage extends Nullstack {
     socket: null,
     messageList: [],
     selectedRoom: 'General',
+    drawerOpen: false
   };
 
   terminate() {
@@ -118,6 +119,14 @@ class ChatsPage extends Nullstack {
     await this.clientJoinRoom({ room: roomName });
   }
 
+  handleCloseDrawer() {
+    this.state.drawerOpen = false;
+  }
+
+  handleOpenDrawer() {
+    this.state.drawerOpen = true;
+  }
+
   render() {
     return (
       <div class="page-container">
@@ -126,8 +135,11 @@ class ChatsPage extends Nullstack {
           selectedRoom={this.state.selectedRoom}
           onChangeRoom={this.handleChangeRoom}
           onCreateRoom={this.handleCreateRoom}
+          drawerOpen={this.state.drawerOpen}
+          onCloseDrawer={this.handleCloseDrawer}
         />
         <Chat
+          currentRoom={this.state.selectedRoom}
           username={this.state.socket?.id}
           messageList={this.state.messageList}
           onSendChat={(message) => {
@@ -136,6 +148,9 @@ class ChatsPage extends Nullstack {
               room: this.state.selectedRoom,
             });
           }}
+          drawerOpen={this.state.drawerOpen}
+          onOpenDrawer={this.handleOpenDrawer}
+          onCloseDrawer={this.handleCloseDrawer}
         />
       </div>
     );

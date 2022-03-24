@@ -1,12 +1,14 @@
 import Nullstack from 'nullstack';
-import { Server } from 'socket.io';
-import io from 'socket.io-client';
 import { v4 } from 'uuid';
 import { createAvatar } from '../../helpers/createAvatar';
 
 // Components
 import MessageInput from '../MessageInput';
 import Messages from '../MessageList';
+import RoundButton from '../RoundButton';
+
+// Icons
+import Burger from '../../assets/icons/burger.njs'
 
 // Styles
 import './styles.scss';
@@ -14,6 +16,10 @@ import './styles.scss';
 //const createSocket = io('http://localhost:3000/');
 
 class Chat extends Nullstack {
+  state = {
+    showingDrawer: false
+  }
+
   handleOnSendChat({ messageList, messageData, username }) {
     if (!messageData?.message) {
       if (!messageData?.audio && !messageData?.file) return;
@@ -33,9 +39,21 @@ class Chat extends Nullstack {
     return payload();
   }
 
-  render({ username, onSendChat, messageList }) {
+  renderHeader({ room, onOpenDrawer }) {
     return (
-      <main class="chat-container">
+      <header class="chat-header">
+        <RoundButton onclick={onOpenDrawer}>
+          <Burger />
+        </RoundButton>
+        <b>{room}</b>
+      </header>
+    );
+  }
+
+  render({ username, onSendChat, messageList, currentRoom, onOpenDrawer, drawerOpen, onCloseDrawer }) {
+    return (
+      <main class="chat-container" onclick={drawerOpen && onCloseDrawer}>
+        <Header room={currentRoom} onOpenDrawer={onOpenDrawer} />
         <Messages messageList={messageList} />
         <MessageInput
           onSend={({ data: messageData }) => {

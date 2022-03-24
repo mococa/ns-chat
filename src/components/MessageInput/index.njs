@@ -77,6 +77,7 @@ class MessageInput extends Nullstack {
       if (this.state.audio) {
         this.state.recording = false;
         this.state.audio = null;
+        alert(101)
         return;
       }
 
