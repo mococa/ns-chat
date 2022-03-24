@@ -1,6 +1,9 @@
 @use '../../theme';
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+
   background-color: theme.$primary;
   color: theme.$white;
 
@@ -49,41 +52,55 @@
     align-items: center;
     gap: 4px;
 
-    margin-bottom: 12px;
-
     b,
     button {
       color: white;
+    }
+    button {
+      padding: 4px;
     }
   }
 
   display: flex;
   flex-flow: column;
   gap: 4px;
+  flex: 1;
 
   margin-top: 24px;
 }
 
-.room {
-  margin-left: 16px;
+.room-list {
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
 
+  overflow: hidden auto;
+  max-height: 140px;
+
+  padding-right: 8px;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.room {
+  margin-left: 4px;
+  padding: 8px !important;
+
+  font-size: 0.875rem;
   color: white;
 
-  user-select: none;
-
-  filter: brightness(1);
-
   &[aria-current='false'] {
-    filter: brightness(0.8);
-  }
-
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(1);
-  }
-  &:active {
-    filter: brightness(0.7);
+    color: #d1d1d1;
   }
 }
 
@@ -113,9 +130,9 @@
 }
 
 .create-secret-room-button {
-  margin-top: 12px;
+  margin-top: 32px;
 }
 
 .logout {
-  margin-top: 90%;
+  margin-top: auto;
 }

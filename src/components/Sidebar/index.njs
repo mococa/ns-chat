@@ -36,15 +36,17 @@ class Sidebar extends Nullstack {
               <Plus />
             </RoundButton>
           </header>
-          {rooms.map((room) => (
-            <div
-              class="room"
-              onclick={() => onChangeRoom({ room })}
-              aria-current={String(room === selectedRoom)}
-            >
-              {room}
-            </div>
-          ))}
+          <div class="room-list">
+            {rooms.map((room) => (
+              <div
+                class="room text-button"
+                onclick={() => onChangeRoom({ room })}
+                aria-current={String(room === selectedRoom)}
+              >
+                {room}
+              </div>
+            ))}
+          </div>
           <button class="text-button create-secret-room-button" onclick={() => onCreateRoom({ roomName: v4(), secret: true })}>
             Create a secret room
           </button>
