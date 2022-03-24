@@ -14,6 +14,7 @@ import './styles.scss';
 
 class ChatsPage extends Nullstack {
   state = {
+    user: null,
     rooms: [],
     socket: null,
     messageList: [],
@@ -59,10 +60,23 @@ class ChatsPage extends Nullstack {
     this.state.selectedRoom = params.room;
   }
 
-  async hydrate() {
-    const rooms = await this.getRooms();
-    this.state.rooms = rooms;
-    await this.clientJoinRoom({ room: this.state.selectedRoom });
+  async hydrate(context) {
+    try {
+      const sessionUser = sessionStorage.getItem('user');
+      if (!sessionUser) throw Error('');
+
+      const user = JSON.parse(sessionUser);
+      context.user = user;
+
+      const rooms = await this.getRooms();
+
+      this.state.user = user;
+      this.state.rooms = rooms;
+
+      await this.clientJoinRoom({ room: this.state.selectedRoom });
+    } catch (err) {
+      context.router.path = '/'
+    }
   }
 
   static async joinRoom(context) {
@@ -92,6 +106,7 @@ class ChatsPage extends Nullstack {
       socket.on('send message', ({ message, room }) => {
         if (!message) return console.log('no message to push')
         if (!room) return console.log('no room to send message')
+
         context.messageList[room].push(message);
         socket.to(room).emit('new message', message);
       });

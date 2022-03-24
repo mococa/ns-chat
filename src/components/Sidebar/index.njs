@@ -10,12 +10,12 @@ class Sidebar extends Nullstack {
     if (roomName) onCreateRoom({ roomName });
   }
 
-  render({ selectedRoom, rooms, onChangeRoom, onCreateRoom, drawerOpen, onCloseDrawer }) {
+  render({ selectedRoom, rooms, onChangeRoom, onCreateRoom, drawerOpen, onCloseDrawer, user }) {
     return (
       <aside class="sidebar" aria-hidden={String(!drawerOpen)} onclick={onCloseDrawer}>
         <header class="sidebar-header">
-          <img src={createAvatar('')} />
-          <b>MyKewlNickname</b>
+          <img src={user?.avatar} />
+          <b>{user?.nickname || ''}</b>
         </header>
 
         <div class="rooms">
@@ -28,7 +28,6 @@ class Sidebar extends Nullstack {
           {rooms.map((room) => (
             <div
               class="room"
-              //href={`/chat/${room}`}
               onclick={() => onChangeRoom({ room })}
               aria-current={String(room === selectedRoom)}
             >

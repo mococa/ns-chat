@@ -20,15 +20,16 @@ class Chat extends Nullstack {
     showingDrawer: false
   }
 
-  handleOnSendChat({ messageList, messageData, username }) {
+  handleOnSendChat({ messageList, messageData, user }) {
+    //alert(user.nickname)
     if (!messageData?.message) {
       if (!messageData?.audio && !messageData?.file) return;
     }
 
     const payload = (local) => ({
       author: {
-        name: local ? 'Me' : username,
-        img: createAvatar(username),
+        name: local ? 'Me' : user?.nickname || JSON.parse(sessionStorage.getItem('user')).nickname,
+        img: user?.avatar || JSON.parse(sessionStorage.getItem('user')).avatar,
       },
       data: messageData,
       at: String(new Date()),

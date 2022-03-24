@@ -22,6 +22,8 @@ class Home extends Nullstack {
         }.svg?scale=90&translateY=4`,
     };
 
+    sessionStorage.setItem('user', JSON.stringify(values));
+
     await this.handleLogin({ values });
     router.path = '/chat/General'
   }
