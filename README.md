@@ -72,6 +72,12 @@ if (argv.environment === 'production') {
   - It does not come with lint, prettier, neither jest by default
   - It **might** be production ready.
 
+## How it looks:
+
+![image](https://user-images.githubusercontent.com/13316723/159837006-e282bb13-2bad-42cf-a808-c304dafdabf9.png)
+![image](https://user-images.githubusercontent.com/13316723/159837035-c8dbc7e6-4cc4-41ef-9b5d-2d0d090257ea.png)
+![image](https://user-images.githubusercontent.com/13316723/159837085-1a8849fb-2830-40d0-8198-1b556d36ce00.png)
+
 
 ## Learn more about Nullstack
 
