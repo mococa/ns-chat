@@ -78,6 +78,13 @@ if (argv.environment === 'production') {
 ![image](https://user-images.githubusercontent.com/13316723/159837035-c8dbc7e6-4cc4-41ef-9b5d-2d0d090257ea.png)
 ![image](https://user-images.githubusercontent.com/13316723/159837085-1a8849fb-2830-40d0-8198-1b556d36ce00.png)
 
+## To do list:
+  - [x] Design pages
+  - [x] Read Nullstack documentation 
+  - [x] Host project with random/mocked data
+  - [ ] Implement an actual database to store messages
+  - [ ] Implement profile pages
+  - [ ] Implement DMs
 
 ## Learn more about Nullstack
 
