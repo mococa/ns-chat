@@ -65,7 +65,7 @@ if (argv.environment === 'production') {
   - Nullstack has got a very nice and helpful community on discord, just not active enough as it's still undergroundish.
   - Documentation is pretty ok
   - IT'S FAST. My computer (4th gen i5, 16gb) builds this project is less than 10s
-  - It has an interesting different approach to serverside stuff
+  - It has an interesting different approach for serverside stuff
   - Typescript is not implemented by default yet, and you cannot create a project with a typescript template yet
   - It is missing some custom webpack configurations. You need to use the default one.
   - Atomic design will not work very well here out of the box
