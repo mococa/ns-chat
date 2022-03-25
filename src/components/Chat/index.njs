@@ -1,5 +1,8 @@
+// External
 import Nullstack from 'nullstack';
 import { v4 } from 'uuid';
+
+// Helpers
 import { createAvatar } from '../../helpers/createAvatar';
 
 // Components
@@ -13,15 +16,14 @@ import Burger from '../../assets/icons/burger.njs';
 // Styles
 import './styles.scss';
 
-//const createSocket = io('http://localhost:3000/');
-
 class Chat extends Nullstack {
+  // States
   state = {
     showingDrawer: false,
   };
 
+  // Handlers
   handleOnSendChat({ messageList, messageData, user }) {
-    //alert(user.nickname)
     if (!messageData?.message) {
       if (!messageData?.audio && !messageData?.file) return;
     }
@@ -45,6 +47,7 @@ class Chat extends Nullstack {
     return payload();
   }
 
+  // Renders
   renderHeader({ room, onOpenDrawer }) {
     return (
       <header class="chat-header">

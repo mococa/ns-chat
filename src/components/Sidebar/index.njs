@@ -1,19 +1,26 @@
+// External
 import Nullstack from 'nullstack';
 import { v4 } from 'uuid';
 
+// Icons
 import Plus from '../../assets/icons/plus';
 
+// Components
 import RoundButton from '../RoundButton';
 
+// Helpers
 import { createAvatar } from '../../helpers/createAvatar';
 
+// Styles
 import './styles.scss';
 
 class Sidebar extends Nullstack {
+  // States
   state = {
     user: null,
   };
 
+  // Handlers
   handleCreateRoom({ onCreateRoom }) {
     const roomName = prompt('New temporary room\nEnter room name:');
     if (roomName) onCreateRoom({ roomName });

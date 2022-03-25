@@ -1,4 +1,7 @@
+// External
 import Nullstack from 'nullstack';
+
+// Styles
 import './styles.scss';
 
 class RoundButton extends Nullstack {

@@ -1,3 +1,4 @@
+// External
 import Nullstack from 'nullstack';
 import { Server } from 'socket.io';
 import { io } from 'socket.io-client';
@@ -10,9 +11,8 @@ import { mapMessages } from '../../helpers/mapMessages';
 // Styles
 import './styles.scss';
 
-//const socket = io('http://localhost:3000/');
-
 class ChatsPage extends Nullstack {
+  // States
   state = {
     user: null,
     rooms: [],
@@ -22,47 +22,18 @@ class ChatsPage extends Nullstack {
     drawerOpen: false,
   };
 
+  // On Unmount
   terminate() {
     this.state.socket?.disconnect();
     this.state.socket?.close();
   }
 
-  async clientJoinRoom({ room, environment }) {
-    this.state.messageList = [];
-    this.state.selectedRoom = room;
-
-    const { production } = environment;
-    const socket =
-      this.state.socket ||
-      io(production ? 'https://nschat.ml/' : 'http://192.168.0.2:3000');
-
-    socket.on('new message', (message) => {
-      if (this.state.messageList.map(({ id }) => id).includes(message.id))
-        return;
-
-      this.state.messageList = [...this.state.messageList, message];
-    });
-
-    socket.on('new room', (roomName) => {
-      this.state.rooms.push(roomName);
-    });
-
-    socket.on('joined', (messages) => {
-      this.state.messageList = messages;
-    });
-
-    await this.joinRoom({ roomName: room });
-    window.history.pushState(room, 'Chat', `/chat/${room}`);
-
-    socket.emit('join room', this.state.selectedRoom);
-
-    this.state.socket = socket;
-  }
-
+  // On start
   async initiate({ params }) {
     this.state.selectedRoom = params.room;
   }
 
+  // On First Render
   async hydrate(context) {
     try {
       const sessionUser = sessionStorage.getItem('user');
@@ -76,12 +47,13 @@ class ChatsPage extends Nullstack {
       this.state.user = user;
       this.state.rooms = rooms;
 
-      await this.clientJoinRoom({ room: this.state.selectedRoom });
+      await this.handleClientJoinRoom({ room: this.state.selectedRoom });
     } catch (err) {
       context.router.path = '/';
     }
   }
 
+  // Server-side methods
   static async joinRoom(context) {
     const { roomName } = context;
     if (!context.messageList) context.messageList = {};
@@ -133,8 +105,41 @@ class ChatsPage extends Nullstack {
     return context.roomsList;
   }
 
+  // Handlers
+  async handleClientJoinRoom({ room, environment }) {
+    this.state.messageList = [];
+    this.state.selectedRoom = room;
+
+    const { production } = environment;
+    const socket =
+      this.state.socket ||
+      io(production ? 'https://nschat.ml/' : 'http://192.168.0.2:3000');
+
+    socket.on('new message', (message) => {
+      if (this.state.messageList.map(({ id }) => id).includes(message.id))
+        return;
+
+      this.state.messageList = [...this.state.messageList, message];
+    });
+
+    socket.on('new room', (roomName) => {
+      this.state.rooms.push(roomName);
+    });
+
+    socket.on('joined', (messages) => {
+      this.state.messageList = messages;
+    });
+
+    await this.joinRoom({ roomName: room });
+    window.history.pushState(room, 'Chat', `/chat/${room}`);
+
+    socket.emit('join room', this.state.selectedRoom);
+
+    this.state.socket = socket;
+  }
+
   async handleChangeRoom({ room }) {
-    await this.clientJoinRoom({ room });
+    await this.handleClientJoinRoom({ room });
   }
 
   async handleCreateRoom({ roomName, secret = false }) {
@@ -143,7 +148,7 @@ class ChatsPage extends Nullstack {
       this.state.rooms = rooms;
     }
     this.state.socket.emit('create room', roomName, secret);
-    await this.clientJoinRoom({ room: roomName });
+    await this.handleClientJoinRoom({ room: roomName });
   }
 
   handleCloseDrawer() {
