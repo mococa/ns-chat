@@ -1,4 +1,4 @@
-name: Lint
+name: Lint Workflow
 
 on:
   pull_request:
