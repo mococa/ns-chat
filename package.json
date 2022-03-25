@@ -16,7 +16,8 @@
     "dev": "node .development/server.js",
     "build": "npx nullstack build --mode=ssr",
     "lint": "eslint --ext .njs --ext .js src",
-    "prettier": "prettier --check src"
+    "prettier": "prettier --check src",
+    "prettier:fix": "prettier --write src"
   },
   "dependencies": {
     "axios": "^0.26.1",

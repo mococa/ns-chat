@@ -34,8 +34,8 @@ class MessageInput extends Nullstack {
   // Handlers
   handleOnChange({ event }) {
     this.state.value = event.target.value;
-    //if (this.value) this.onType({ value: this.value });
-    //else this.onStopTyping();
+    // if (this.value) this.onType({ value: this.value });
+    // else this.onStopTyping();
   }
 
   handleOnSubmit({ event }) {
@@ -130,7 +130,6 @@ class MessageInput extends Nullstack {
       />
     );
   }
-
 
   renderActionButtons() {
     return (
