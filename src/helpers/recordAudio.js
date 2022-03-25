@@ -1,3 +1,4 @@
+// Helpers
 import { blobToBase64 } from './blobToBase64';
 
 export const recordAudio = async () => {

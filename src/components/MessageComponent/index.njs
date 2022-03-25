@@ -1,9 +1,14 @@
+// External
 import Nullstack from 'nullstack';
+
+// Helpers
 import { formatDate } from '../../helpers/formatDate';
+
+// Styles
 import './styles.scss';
 
 class MessageComponent extends Nullstack {
-  // Front-end run-once method
+  // On First Render
   hydrate({ self }) {
     const message = self.element;
     // Todo: Only scroll if user's scroll is 100% on bottom

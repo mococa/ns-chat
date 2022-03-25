@@ -1,18 +1,24 @@
+// External
 import Nullstack from 'nullstack';
 import { v4 } from 'uuid';
 
+// Components
 import Input from '../../components/Input';
 
+// Styles
 import './styles.scss';
 
 class Home extends Nullstack {
+  // States
   state = {
     avatars: [v4()],
     selectedAvatarIndex: 0,
   };
 
-  static async handleLogin() {}
+  // Server-side methods
+  static async onLogin() {}
 
+  // Handlers
   async handleSubmit({ event, router }) {
     event?.preventDefault();
     const values = {
@@ -22,7 +28,7 @@ class Home extends Nullstack {
 
     sessionStorage.setItem('user', JSON.stringify(values));
 
-    await this.handleLogin({ values });
+    await this.onLogin({ values });
     router.path = '/chat/General';
   }
 

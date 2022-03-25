@@ -1,8 +1,6 @@
 import Nullstack from 'nullstack';
 import Application from './src/Application';
 
-//const io = socketIo(server);
-
 const context = Nullstack.start(Application);
 
 const { server } = context;

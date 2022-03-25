@@ -1,9 +1,14 @@
+// External
 import Nullstack from 'nullstack';
+
+// Components
 import MessageComponent from '../MessageComponent';
 
+// Styles
 import './styles.scss';
 
 class MessageList extends Nullstack {
+  // Renders
   renderMessage({ author, text, at, audioSrc, file }) {
     return (
       <MessageComponent

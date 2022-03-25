@@ -1,21 +1,26 @@
+// External
 import Nullstack from 'nullstack';
 
+// Icons
 import Mic from '../../assets/icons/mic';
 import Stop from '../../assets/icons/stop';
 import Attach from '../../assets/icons/attach';
 import Send from '../../assets/icons/send';
 
+// Components
 import RoundButton from '../RoundButton';
 
+// Helpers
 import { uploadFile } from '../../helpers/uploadFile';
 import { recordAudio } from '../../helpers/recordAudio';
-
-import './styles.scss';
-
 import { blobToBase64 } from '../../helpers/blobToBase64';
 import { getInlineTransferLink } from '../../helpers/getInlineTransferLink';
 
+// Styles
+import './styles.scss';
+
 class MessageInput extends Nullstack {
+  // States
   state = {
     value: '',
     mediaRecorder: null,
@@ -26,6 +31,7 @@ class MessageInput extends Nullstack {
     uploadingFile: false,
   };
 
+  // Handlers
   handleOnChange({ event }) {
     this.state.value = event.target.value;
     //if (this.value) this.onType({ value: this.value });
@@ -51,7 +57,7 @@ class MessageInput extends Nullstack {
     this.state.value = '';
   }
 
-  onRecordClick() {
+  handleOnRecordClick() {
     return this.state.recording
       ? this.handleStopRecordingAudio()
       : this.handleRecordAudio();
@@ -61,7 +67,7 @@ class MessageInput extends Nullstack {
     const self = this;
     this.state.recording = true;
     const recorder = await recordAudio();
-    this.onRecordClick = () => {
+    this.handleOnRecordClick = () => {
       self.handleStopRecordingAudio(recorder);
     };
   }
@@ -72,7 +78,7 @@ class MessageInput extends Nullstack {
     this.state.audio = audio;
     this.state.uplodingAudio = true;
 
-    this.onRecordClick = () => {
+    this.handleOnRecordClick = () => {
       if (this.state.audio) {
         this.state.recording = false;
         this.state.audio = null;
@@ -89,18 +95,6 @@ class MessageInput extends Nullstack {
 
     if (this.state.audio) this.state.audio.onlineUrl = onlineUrl;
     if (this.state.uplodingAudio) this.state.uplodingAudio = false;
-  }
-
-  renderInput() {
-    return (
-      <input
-        oninput={this.handleOnChange}
-        onkeyup={this.handleOnSubmit}
-        value={this.state.value}
-        placeholder="Type something to send"
-        autofocus
-      />
-    );
   }
 
   handleUpload({ event }) {
@@ -124,10 +118,24 @@ class MessageInput extends Nullstack {
     };
   }
 
+  // Renders
+  renderInput() {
+    return (
+      <input
+        oninput={this.handleOnChange}
+        onkeyup={this.handleOnSubmit}
+        value={this.state.value}
+        placeholder="Type something to send"
+        autofocus
+      />
+    );
+  }
+
+
   renderActionButtons() {
     return (
       <div class={`action-buttons${this.state.audio ? ' with-audio' : ''}`}>
-        <RoundButton onclick={this.onRecordClick}>
+        <RoundButton onclick={this.handleOnRecordClick}>
           {this.state.recording ? <Stop /> : <Mic />}
         </RoundButton>
         <input type="file" id="file-upload" onchange={this.handleUpload} />
@@ -162,8 +170,6 @@ class MessageInput extends Nullstack {
   }
 
   render({ onSend }) {
-    //this.onType = onType;
-    //this.onStopTyping = onStopTyping;
     this.onSend = onSend;
 
     return (
