@@ -10,13 +10,7 @@ class Input extends Nullstack {
 
   render(props) {
     this.onEnter = props.onEnter;
-    return (
-      <input
-        class="input"
-        onkeyup={this.handleOnSubmit}
-        {...props}
-      />
-    );
+    return <input class="input" onkeyup={this.handleOnSubmit} {...props} />;
   }
 }
 

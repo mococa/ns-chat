@@ -1,8 +1,9 @@
 import { blobToBase64 } from './blobToBase64';
 
-export const recordAudio = () =>
-  new Promise(async (resolve) => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+export const recordAudio = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+  return new Promise((resolve) => {
     const mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.start();
 
@@ -38,3 +39,4 @@ export const recordAudio = () =>
       stop,
     });
   });
+};

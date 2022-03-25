@@ -4,7 +4,6 @@ import Mic from '../../assets/icons/mic';
 import Stop from '../../assets/icons/stop';
 import Attach from '../../assets/icons/attach';
 import Send from '../../assets/icons/send';
-import Loading from '../../assets/icons/loading.njs';
 
 import RoundButton from '../RoundButton';
 
@@ -33,7 +32,7 @@ class MessageInput extends Nullstack {
     //else this.onStopTyping();
   }
 
-  handleOnSubmit({ event, self }) {
+  handleOnSubmit({ event }) {
     if (event.key !== 'Enter') return;
     this.handleSendMessage();
   }

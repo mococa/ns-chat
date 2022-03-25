@@ -8,7 +8,7 @@ import Messages from '../MessageList';
 import RoundButton from '../RoundButton';
 
 // Icons
-import Burger from '../../assets/icons/burger.njs'
+import Burger from '../../assets/icons/burger.njs';
 
 // Styles
 import './styles.scss';
@@ -17,8 +17,8 @@ import './styles.scss';
 
 class Chat extends Nullstack {
   state = {
-    showingDrawer: false
-  }
+    showingDrawer: false,
+  };
 
   handleOnSendChat({ messageList, messageData, user }) {
     //alert(user.nickname)
@@ -28,12 +28,17 @@ class Chat extends Nullstack {
 
     const payload = (local) => ({
       author: {
-        name: local ? 'Me' : user?.nickname || JSON.parse(sessionStorage.getItem('user')).nickname,
-        img: createAvatar(user?.avatar) || createAvatar(JSON.parse(sessionStorage.getItem('user')).avatar),
+        name: local
+          ? 'Me'
+          : user?.nickname ||
+            JSON.parse(sessionStorage.getItem('user')).nickname,
+        img:
+          createAvatar(user?.avatar) ||
+          createAvatar(JSON.parse(sessionStorage.getItem('user')).avatar),
       },
       data: messageData,
       at: String(new Date()),
-      id: v4()
+      id: v4(),
     });
 
     messageList.push(payload(true));
@@ -51,7 +56,15 @@ class Chat extends Nullstack {
     );
   }
 
-  render({ username, onSendChat, messageList, currentRoom, onOpenDrawer, drawerOpen, onCloseDrawer }) {
+  render({
+    username,
+    onSendChat,
+    messageList,
+    currentRoom,
+    onOpenDrawer,
+    drawerOpen,
+    onCloseDrawer,
+  }) {
     return (
       <main class="chat-container" onclick={drawerOpen && onCloseDrawer}>
         <Header room={currentRoom} onOpenDrawer={onOpenDrawer} />

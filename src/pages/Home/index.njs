@@ -8,11 +8,10 @@ import './styles.scss';
 class Home extends Nullstack {
   state = {
     avatars: [v4()],
-    selectedAvatarIndex: 0
-  }
+    selectedAvatarIndex: 0,
+  };
 
-  static async handleLogin(ctx) {
-  }
+  static async handleLogin() {}
 
   async handleSubmit({ event, router }) {
     event?.preventDefault();
@@ -24,7 +23,7 @@ class Home extends Nullstack {
     sessionStorage.setItem('user', JSON.stringify(values));
 
     await this.handleLogin({ values });
-    router.path = '/chat/General'
+    router.path = '/chat/General';
   }
 
   handleGenerateAvatar() {
@@ -44,9 +43,9 @@ class Home extends Nullstack {
       <form onsubmit={this.handleSubmit} class="signup-form">
         <img
           onclick={this.handleGenerateAvatar}
-          src={`https://avatars.dicebear.com/api/adventurer/${this.state.avatars[
-            this.state.selectedAvatarIndex
-          ]}.svg?scale=90&translateY=4`}
+          src={`https://avatars.dicebear.com/api/adventurer/${
+            this.state.avatars[this.state.selectedAvatarIndex]
+          }.svg?scale=90&translateY=4`}
         />
         <span>Click to generate a new avatar</span>
         {this.state.selectedAvatarIndex > 0 && (

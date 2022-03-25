@@ -19,7 +19,7 @@ class ChatsPage extends Nullstack {
     socket: null,
     messageList: [],
     selectedRoom: 'General',
-    drawerOpen: false
+    drawerOpen: false,
   };
 
   terminate() {
@@ -32,10 +32,13 @@ class ChatsPage extends Nullstack {
     this.state.selectedRoom = room;
 
     const { production } = environment;
-    const socket = this.state.socket || io(production ? 'https://nschat.ml/' : 'http://192.168.0.2:3000');
+    const socket =
+      this.state.socket ||
+      io(production ? 'https://nschat.ml/' : 'http://192.168.0.2:3000');
 
     socket.on('new message', (message) => {
-      if (this.state.messageList.map(({ id }) => id).includes(message.id)) return;
+      if (this.state.messageList.map(({ id }) => id).includes(message.id))
+        return;
 
       this.state.messageList = [...this.state.messageList, message];
     });
@@ -75,7 +78,7 @@ class ChatsPage extends Nullstack {
 
       await this.clientJoinRoom({ room: this.state.selectedRoom });
     } catch (err) {
-      context.router.path = '/'
+      context.router.path = '/';
     }
   }
 
@@ -93,19 +96,25 @@ class ChatsPage extends Nullstack {
       socket.on('join room', (room) => {
         socket.join(room);
         socket.room = room;
-        socket.emit('joined', mapMessages(context.messageList, room, socket.id));
+        socket.emit(
+          'joined',
+          mapMessages(context.messageList, room, socket.id)
+        );
       });
 
       socket.on('create room', (room, secret) => {
         if (!secret) socket.broadcast.emit('new room', room);
         socket.join(room);
         socket.room = room;
-        socket.emit('joined', mapMessages(context.messageList, room, socket.id));
+        socket.emit(
+          'joined',
+          mapMessages(context.messageList, room, socket.id)
+        );
       });
 
       socket.on('send message', ({ message, room }) => {
-        if (!message) return console.log('no message to push')
-        if (!room) return console.log('no room to send message')
+        if (!message) return console.log('no message to push');
+        if (!room) return console.log('no room to send message');
 
         context.messageList[room].push(message);
         socket.to(room).emit('new message', message);
@@ -129,7 +138,7 @@ class ChatsPage extends Nullstack {
   }
 
   async handleCreateRoom({ roomName, secret = false }) {
-    if(!secret){
+    if (!secret) {
       const rooms = await this.createRoom({ roomName });
       this.state.rooms = rooms;
     }

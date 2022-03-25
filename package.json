@@ -5,13 +5,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nullstack": "~0.14.0"
+    "eslint": "^8.11.0",
+    "eslint-plugin-react": "^7.29.4",
+    "nullstack": "~0.14.0",
+    "prettier": "^2.6.0"
   },
   "scripts": {
     "start": "npx nullstack start",
     "prod": "node .production/server.js",
     "dev": "node .development/server.js",
-    "build": "npx nullstack build --mode=ssr"
+    "build": "npx nullstack build --mode=ssr",
+    "lint": "eslint --ext .njs --ext .js src",
+    "prettier": "prettier --check src"
   },
   "dependencies": {
     "axios": "^0.26.1",
