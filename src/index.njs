@@ -27,6 +27,7 @@ class Application extends Nullstack {
         <Head />
         <main>
           <Home route="/" />
+          <Home route="/create-account" />
           <Chats route="/chat/:room" />
         </main>
       </>

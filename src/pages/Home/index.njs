@@ -1,5 +1,6 @@
 // External
 import Nullstack from 'nullstack';
+import { compare, hash } from 'bcryptjs';
 import { v4 } from 'uuid';
 
 // Components
@@ -16,19 +17,100 @@ class Home extends Nullstack {
   };
 
   // Server-side methods
-  static async onLogin() {}
+  static async onLogin({ database, values }) {
+    const { username, password } = values;
+    if (!password || !username)
+      return {
+        error: {
+          message: 'Please, fill all required fields',
+          status: 400,
+        },
+      };
+    try {
+      const account = await database.user.findUnique({
+        where: { username },
+      });
+
+      if (!account)
+        return {
+          error: {
+            message: 'Account not found',
+            status: 404,
+          },
+        };
+
+      const samePassword = await compare(password, account.password);
+      if (samePassword) {
+        delete account.password;
+        return account;
+      }
+    } catch (error) {
+      console.log(error.message);
+      return {
+        error: {
+          message: 'Unknown error', // Todo: Provide better error messages
+          status: 500,
+        },
+      };
+    }
+
+    return {
+      error: {
+        message: 'Account not found',
+        status: 404,
+      },
+    };
+  }
+
+  static async onCreateAccount({ database, values }) {
+    const { username, password, avatar } = values;
+    if (!password || !username || !avatar)
+      return {
+        error: {
+          message: 'Please, fill all required fields',
+          status: 400,
+        },
+      };
+    const hashedPassword = await hash(password, 10);
+    try {
+      const createdUser = await database.user.create({
+        data: {
+          username,
+          password: hashedPassword,
+          avatar,
+        },
+      });
+      delete createdUser.password;
+      return createdUser;
+    } catch (err) {
+      console.log(err.message);
+      return {
+        error: {
+          message: 'Unknown error', // Todo: Provide better error messages
+          status: 500,
+        },
+      };
+    }
+  }
 
   // Handlers
-  async handleSubmit({ event, router }) {
+  async handleSignUp({ event, router }) {
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
       avatar: this.state.avatars[this.state.selectedAvatarIndex],
     };
-
-    sessionStorage.setItem('user', JSON.stringify(values));
-
-    await this.onLogin({ values });
+    const createdAccount = await this.onCreateAccount({ values });
+    if (createdAccount.error) return alert(createdAccount.error.message);
+    sessionStorage.setItem('user', JSON.stringify(createdAccount));
+    router.path = '/chat/General';
+  }
+  async handleLogin({ event, router }) {
+    event?.preventDefault();
+    const values = Object.fromEntries(new FormData(event?.target));
+    const account = await this.onLogin({ values });
+    if (account.error) return alert(account.error.message);
+    sessionStorage.setItem('user', JSON.stringify(account));
     router.path = '/chat/General';
   }
 
@@ -44,26 +126,75 @@ class Home extends Nullstack {
     }
   }
 
+  // Renders
+  renderAvatar() {
+    return (
+      <img
+        onclick={this.handleGenerateAvatar}
+        src={`https://avatars.dicebear.com/api/adventurer/${
+          this.state.avatars[this.state.selectedAvatarIndex]
+        }.svg?scale=90&translateY=4`}
+      />
+    );
+  }
+
+  renderPreviousLabel() {
+    return (
+      this.state.selectedAvatarIndex > 0 && (
+        <a href="#" onclick={this.handlePreviousAvatar}>
+          Previous avatar
+        </a>
+      )
+    );
+  }
+
+  renderCreateAccount() {
+    return (
+      <form onsubmit={this.handleSignUp} class="signup-form">
+        <h2>Create an account</h2>
+        <span>Click to generate a new avatar</span>
+        <Avatar />
+        <PreviousLabel />
+        <Input placeholder="Enter a username" name="username" required />
+        <Input
+          placeholder="Enter a password"
+          name="password"
+          type="password"
+          required
+        />
+        <button type="submit">Let&apos;s go!</button>
+        <div class="already-have-account">
+          Already have an account?
+          <a href="/">Login now</a>
+        </div>
+      </form>
+    );
+  }
+
+  renderLogin() {
+    return (
+      <form onsubmit={this.handleLogin} class="signup-form">
+        <Avatar />
+        <h3>Welcome Back!</h3>
+        <Input placeholder="Username" name="username" required />
+        <Input
+          placeholder="Password"
+          name="password"
+          type="password"
+          required
+        />
+        <button type="submit">Log in</button>
+        <a href="/create-account">Register now</a>
+      </form>
+    );
+  }
+
   render() {
     return (
-      <form onsubmit={this.handleSubmit} class="signup-form">
-        <img
-          onclick={this.handleGenerateAvatar}
-          src={`https://avatars.dicebear.com/api/adventurer/${
-            this.state.avatars[this.state.selectedAvatarIndex]
-          }.svg?scale=90&translateY=4`}
-        />
-        <span>Click to generate a new avatar</span>
-        {this.state.selectedAvatarIndex > 0 && (
-          <a href="#" onclick={this.handlePreviousAvatar}>
-            Previous avatar
-          </a>
-        )}
-
-        <Input placeholder="Enter a nickname" name="nickname" />
-        <button type="submit">Chat now!</button>
-      </form>
-      // <a href="/chat/General">Go to /chat</a>);
+      <>
+        <Login route="/" />
+        <CreateAccount route="/create-account" />
+      </>
     );
   }
 }

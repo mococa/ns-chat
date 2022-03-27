@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/client": "^3.11.1",
     "axios": "^0.26.1",
+    "bcryptjs": "^2.4.3",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "uuid": "^8.3.2"
