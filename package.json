@@ -8,7 +8,8 @@
     "eslint": "^8.11.0",
     "eslint-plugin-react": "^7.29.4",
     "nullstack": "~0.14.0",
-    "prettier": "^2.6.0"
+    "prettier": "^2.6.0",
+    "prisma": "^3.11.1"
   },
   "scripts": {
     "start": "npx nullstack start",
@@ -20,6 +21,7 @@
     "prettier:fix": "prettier --write src"
   },
   "dependencies": {
+    "@prisma/client": "^3.11.1",
     "axios": "^0.26.1",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",

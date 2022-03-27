@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Chats from './pages/Chats';
 
 // Styles
-import './Application.scss';
+import './styles.scss';
 
 class Application extends Nullstack {
   // On server start
