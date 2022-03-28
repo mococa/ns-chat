@@ -45,7 +45,7 @@ class Home extends Nullstack {
         return account;
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       return {
         error: {
           message: 'Unknown error', // Todo: Provide better error messages
@@ -83,7 +83,7 @@ class Home extends Nullstack {
       delete createdUser.password;
       return createdUser;
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
       return {
         error: {
           message: 'Unknown error', // Todo: Provide better error messages

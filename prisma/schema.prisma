@@ -15,33 +15,25 @@ model User {
   avatar    String
   username  String    @unique
   password  String
-  Message   Message[]
   createdAt DateTime  @default(now())
+  messages  Message[]
 }
 
 model Room {
-  id          String        @id @default(uuid())
-  name        String
-  createdAt   DateTime      @default(now())
-  RoomMessage RoomMessage[]
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  messages  Message[]
 }
 
 model Message {
-  id          String        @id @default(uuid())
-  author      User          @relation(fields: [authorId], references: [id])
-  authorId    String
-  text        String
-  audio       String
-  attachment  String
-  createdAt   DateTime      @default(now())
-  RoomMessage RoomMessage[]
-}
-
-model RoomMessage {
-  room      Room    @relation(fields: [roomId], references: [id])
-  message   Message @relation(fields: [messageId], references: [id])
-  roomId    String
-  messageId String
-
-  @@id([messageId, roomId])
+  id         String   @id @default(uuid())
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId   String
+  text       String?
+  audio      String?
+  attachment String?
+  createdAt  DateTime @default(now())
+  room       Room     @relation(fields: [roomId], references: [id])
+  roomId     String
 }

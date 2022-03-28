@@ -6,3 +6,4 @@ yarn.lock
 .env
 prisma/*.db
 prisma/migrations
+prisma/*-journal

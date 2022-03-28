@@ -1,9 +1,5 @@
 // External
 import Nullstack from 'nullstack';
-import { v4 } from 'uuid';
-
-// Helpers
-import { createAvatar } from '../../helpers/createAvatar';
 
 // Components
 import MessageInput from '../MessageInput';
@@ -15,6 +11,7 @@ import Burger from '../../assets/icons/burger.njs';
 
 // Styles
 import './styles.scss';
+import { v4 } from 'uuid';
 
 class Chat extends Nullstack {
   // States
@@ -24,26 +21,24 @@ class Chat extends Nullstack {
 
   // Handlers
   handleOnSendChat({ messageList, messageData, user }) {
-    if (!messageData?.message) {
-      if (!messageData?.audio && !messageData?.file) return;
+    if (!messageData?.text) {
+      if (!messageData?.audio && !messageData?.attachmemt) return;
     }
 
-    const payload = (local) => ({
-      author: {
-        name: local
-          ? 'Me'
-          : user?.nickname ||
-            JSON.parse(sessionStorage.getItem('user')).nickname,
-        img:
-          createAvatar(user?.avatar) ||
-          createAvatar(JSON.parse(sessionStorage.getItem('user')).avatar),
-      },
+    const payload = () => ({
+      authorId: user.id,
       data: messageData,
-      at: String(new Date()),
-      id: v4(),
     });
 
-    messageList.push(payload(true));
+    messageList.push({
+      id: v4(),
+      authorId: user.id,
+      author: user,
+      text: messageData.text || '',
+      audio: messageData.audio || '',
+      attachment: messageData.attachment || '',
+      createdAt: new Date(),
+    });
     return payload();
   }
 
