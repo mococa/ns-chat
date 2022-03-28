@@ -48,7 +48,9 @@ class MessageInput extends Nullstack {
       data: {
         text: this.state.value,
         ...(this.state.audio && { audio: this.state.audio?.onlineUrl }),
-        ...(this.state.attachment && { attachment: this.state.attachment?.onlineUrl }),
+        ...(this.state.attachment && {
+          attachment: this.state.attachment?.onlineUrl,
+        }),
       },
     });
 
@@ -182,7 +184,9 @@ class MessageInput extends Nullstack {
             type="audio/mpeg"
           />
         )}
-        {this.state.attachment && <span>{this.state.attachment.name.slice(0, 10)}...</span>}
+        {this.state.attachment && (
+          <span>{this.state.attachment.name.slice(0, 10)}...</span>
+        )}
         <ActionButtons />
       </div>
     );
