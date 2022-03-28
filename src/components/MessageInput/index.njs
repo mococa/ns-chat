@@ -25,9 +25,9 @@ class MessageInput extends Nullstack {
     value: '',
     mediaRecorder: null,
     recording: false,
-    audio: null,
+    audio: undefined,
     uplodingAudio: false,
-    file: null,
+    attachment: undefined,
     uploadingFile: false,
   };
 
@@ -46,14 +46,14 @@ class MessageInput extends Nullstack {
   handleSendMessage() {
     this.onSend({
       data: {
-        message: this.state.value,
+        text: this.state.value,
         ...(this.state.audio && { audio: this.state.audio?.onlineUrl }),
-        ...(this.state.file && { file: this.state.file?.onlineUrl }),
+        ...(this.state.attachment && { attachment: this.state.attachment?.onlineUrl }),
       },
     });
 
-    this.state.file = null;
-    this.state.audio = null;
+    this.state.attachment = undefined;
+    this.state.audio = undefined;
     this.state.value = '';
   }
 
@@ -111,7 +111,7 @@ class MessageInput extends Nullstack {
         getInlineTransferLink(data.trim())
       );
       this.state.uploadingFile = false;
-      this.state.file = {
+      this.state.attachment = {
         onlineUrl,
         name: file.name,
       };
@@ -182,7 +182,7 @@ class MessageInput extends Nullstack {
             type="audio/mpeg"
           />
         )}
-        {this.state.file && <span>{this.state.file.name.slice(0, 10)}...</span>}
+        {this.state.attachment && <span>{this.state.attachment.name.slice(0, 10)}...</span>}
         <ActionButtons />
       </div>
     );

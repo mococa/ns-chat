@@ -6,7 +6,6 @@ import { io } from 'socket.io-client';
 // Components
 import Chat from '../../components/Chat';
 import Sidebar from '../../components/Sidebar';
-import { mapMessages } from '../../helpers/mapMessages';
 
 // Styles
 import './styles.scss';
@@ -18,7 +17,7 @@ class ChatsPage extends Nullstack {
     rooms: [],
     socket: null,
     messageList: [],
-    selectedRoom: 'General',
+    selectedRoom: '2642d33b-692e-45e8-9d03-c0d3f5f38e31',
     drawerOpen: false,
   };
 
@@ -26,11 +25,6 @@ class ChatsPage extends Nullstack {
   terminate() {
     this.state.socket?.disconnect();
     this.state.socket?.close();
-  }
-
-  // On start
-  async initiate({ params }) {
-    this.state.selectedRoom = params.room;
   }
 
   // On First Render
@@ -44,65 +38,109 @@ class ChatsPage extends Nullstack {
 
       const rooms = await this.getRooms();
 
+      this.state.selectedRoom = rooms.find(
+        (room) => room.id === context.params.room
+      );
       this.state.user = user;
       this.state.rooms = rooms;
 
       await this.handleClientJoinRoom({ room: this.state.selectedRoom });
     } catch (err) {
+      console.error({ err });
       context.router.path = '/';
     }
   }
 
   // Server-side methods
+  static async createRoom({ database, roomName }) {
+    const createdRoom = await database.room.create({
+      data: {
+        name: roomName,
+      },
+    });
+    return createdRoom;
+  }
+
+  static async getRooms({ database }) {
+    return await database.room.findMany();
+  }
+
+  static async getMessages({ database, roomId }) {
+    return await database.message.findMany({
+      where: { roomId },
+      include: { author: { select: { username: true, avatar: true } } },
+    });
+  }
+
+  static async createMessage({ database, message }) {
+    return database.message.create({
+      data: message,
+      include: { author: { select: { username: true, avatar: true } } },
+    });
+  }
+
+  static async getRoomMessages({ database, roomId }) {
+    const room = await database.room.findUnique({
+      where: { id: roomId },
+      include: {
+        messages: {
+          include: { author: { select: { username: true, avatar: true } } },
+        },
+      },
+    });
+    return room.messages;
+  }
+
   static async joinRoom(context) {
-    const { roomName } = context;
+    const roomName = context.room.name;
+    const roomId = context.room.id;
+
+    const messages = await this.getRoomMessages({
+      database: context.database,
+      roomId,
+    });
+
     if (!context.messageList) context.messageList = {};
-    if (!context.messageList[roomName]) context.messageList[roomName] = [];
+    if (!context.messageList[roomName])
+      context.messageList[roomName] = messages;
 
     if (context.io) return;
 
     const ws = new Server(context.server, { cors: { origin: '*' } }); // Todo: Change origin on deployed app
-    ws.on('connect', (socket) => {
+    ws.on('connect', async (socket) => {
       console.log(`new connection: ${socket.id}`);
 
       socket.on('join room', (room) => {
         socket.join(room);
-        socket.room = room;
-        socket.emit(
-          'joined',
-          mapMessages(context.messageList, room, socket.id)
-        );
+        socket.emit('joined', context.messageList[room.name]);
       });
 
       socket.on('create room', (room, secret) => {
         if (!secret) socket.broadcast.emit('new room', room);
         socket.join(room);
-        socket.room = room;
-        socket.emit(
-          'joined',
-          mapMessages(context.messageList, room, socket.id)
-        );
+        socket.emit('joined', context.messageList[room.name]);
       });
 
-      socket.on('send message', ({ message, room }) => {
+      socket.on('send message', async ({ message, room }) => {
         if (!message) return console.log('no message to push');
         if (!room) return console.log('no room to send message');
 
-        context.messageList[room].push(message);
-        socket.to(room).emit('new message', message);
+        const createdMessage = await this.createMessage({
+          database: context.database,
+          message: {
+            authorId: message.authorId,
+            text: message.data.text || '',
+            audio: message.data.audio || '',
+            attachment: message.data.attachment || '',
+            roomId: room.id,
+          },
+        });
+        context.messageList[room.name].push(createdMessage);
+        socket.to(room).emit('new message', createdMessage);
       });
     });
 
     context.io = ws;
-  }
-  static async getRooms(context) {
-    if (!context.roomsList) context.roomsList = ['General'];
-    return context.roomsList;
-  }
-
-  static async createRoom(context) {
-    context.roomsList.push(context.roomName);
-    return context.roomsList;
   }
 
   // Handlers
@@ -122,16 +160,17 @@ class ChatsPage extends Nullstack {
       this.state.messageList = [...this.state.messageList, message];
     });
 
-    socket.on('new room', (roomName) => {
-      this.state.rooms.push(roomName);
+    socket.on('new room', (room) => {
+      this.state.rooms.push(room);
     });
 
     socket.on('joined', (messages) => {
       this.state.messageList = messages;
     });
 
-    await this.joinRoom({ roomName: room });
-    window.history.pushState(room, 'Chat', `/chat/${room}`);
+    await this.joinRoom({ room });
+
+    window.history.pushState(room.id, 'Chat', `/chat/${room.id}`);
 
     socket.emit('join room', this.state.selectedRoom);
 
@@ -144,8 +183,11 @@ class ChatsPage extends Nullstack {
 
   async handleCreateRoom({ roomName, secret = false }) {
     if (!secret) {
-      const rooms = await this.createRoom({ roomName });
-      this.state.rooms = rooms;
+      const createdRoom = await this.createRoom({
+        roomName,
+      });
+      this.state.rooms.push(createdRoom);
+      this.state.selectedRoom = createdRoom;
     }
     this.state.socket.emit('create room', roomName, secret);
     await this.handleClientJoinRoom({ room: roomName });

@@ -9,14 +9,14 @@ import './styles.scss';
 
 class MessageList extends Nullstack {
   // Renders
-  renderMessage({ author, text, at, audioSrc, file }) {
+  renderMessage({ author, text, at, audioSrc, attachment }) {
     return (
       <MessageComponent
         author={author}
         text={text}
         at={at}
         audioSrc={audioSrc}
-        file={file}
+        attachment={attachment}
       />
     );
   }
@@ -24,13 +24,13 @@ class MessageList extends Nullstack {
   render({ messageList }) {
     return (
       <div class="messages-container">
-        {messageList.map(({ author, data, at }) => (
+        {messageList.map(({ author, createdAt, text, audio, attachment }) => (
           <Message
             author={author}
-            text={data.message}
-            at={at}
-            audioSrc={data.audio}
-            file={data.file}
+            text={text}
+            at={createdAt}
+            audioSrc={audio}
+            attachment={attachment}
           />
         ))}
       </div>

@@ -1,5 +1,6 @@
+import { PrismaClient } from '@prisma/client';
 import Nullstack from 'nullstack';
-import Application from './src/Application';
+import Application from './src';
 
 const context = Nullstack.start(Application);
 
@@ -12,7 +13,8 @@ server.cors = {
 }
 
 context.start = async function start() {
-  // https://nullstack.app/application-startup
+  const prisma = new PrismaClient();
+  context.database = prisma;
 }
 
 export default context;

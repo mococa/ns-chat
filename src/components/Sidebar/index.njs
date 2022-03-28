@@ -63,9 +63,9 @@ class Sidebar extends Nullstack {
               <div
                 class="room text-button"
                 onclick={() => onChangeRoom({ room })}
-                aria-current={String(room === selectedRoom)}
+                aria-current={String(room.id === selectedRoom.id)}
               >
-                {room}
+                {room.name}
               </div>
             ))}
           </div>
