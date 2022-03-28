@@ -18,7 +18,9 @@
     "build": "npx nullstack build --mode=ssr",
     "lint": "eslint --ext .njs --ext .js src",
     "prettier": "prettier --check src",
-    "prettier:fix": "prettier --write src"
+    "prettier:fix": "prettier --write src",
+    "migrate": "npx prisma migrate dev",
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^3.11.1",

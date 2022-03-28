@@ -24,7 +24,7 @@ class MessageList extends Nullstack {
   render({ messageList }) {
     return (
       <div class="messages-container">
-        {messageList.map(({ author, createdAt, text, audio, attachment }) => (
+        {messageList?.map(({ author, createdAt, text, audio, attachment }) => (
           <Message
             author={author}
             text={text}

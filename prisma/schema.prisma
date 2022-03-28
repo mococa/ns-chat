@@ -28,12 +28,12 @@ model Room {
 
 model Message {
   id         String   @id @default(uuid())
-  author     User     @relation(fields: [authorId], references: [id])
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId   String
   text       String?
   audio      String?
   attachment String?
   createdAt  DateTime @default(now())
-  room       Room     @relation(fields: [roomId], references: [id])
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId     String
 }
