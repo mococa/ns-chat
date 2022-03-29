@@ -40,7 +40,9 @@ Install the dependencies:
 
 Then add `externals: ['_http_common', 'encoding'],` on Nullstack webpack config. You can put it in the return of the `server` function, as we're using prisma.
 
-Then run the app in development mode:
+Then run `yarn migrate`, and choose migration name, like "init".
+
+Now you'll be able to run the app in development mode:
 
 `npm start` or `yarn start`
 
@@ -84,7 +86,7 @@ if (argv.environment === 'production') {
   - [x] Design pages
   - [x] Read Nullstack documentation
   - [x] Host project with random/mocked data
-  - [ ] Implement an actual database to store messages
+  - [x] Implement an actual database to store messages
   - [ ] Implement profile pages
   - [ ] Implement DMs
 
