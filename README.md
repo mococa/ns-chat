@@ -38,6 +38,8 @@ Install the dependencies:
 
 `npm install` or `yarn`
 
+Then add `externals: ['_http_common', 'encoding'],` on Nullstack webpack config. You can put it in the return of the `server` function, as we're using prisma.
+
 Then run the app in development mode:
 
 `npm start` or `yarn start`
@@ -80,7 +82,7 @@ if (argv.environment === 'production') {
 
 ## To do list:
   - [x] Design pages
-  - [x] Read Nullstack documentation 
+  - [x] Read Nullstack documentation
   - [x] Host project with random/mocked data
   - [ ] Implement an actual database to store messages
   - [ ] Implement profile pages

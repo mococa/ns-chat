@@ -43,4 +43,8 @@
 
     filter: contrast(0.8);
   }
+
+  &.primary {
+    color: var(--accent-color);
+  }
 }

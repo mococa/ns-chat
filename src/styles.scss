@@ -1,0 +1,86 @@
+@use './theme';
+
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+body {
+  color: #fff;
+  font-size: 1rem;
+
+  background-color: var(--background);
+
+  height: 100vh;
+
+  & > #application {
+    height: 100%;
+
+    & > main {
+      height: inherit;
+      max-width: 1920px;
+
+      outline: 1px solid theme.$background500;
+
+      margin: auto;
+    }
+  }
+}
+
+body {
+  --text-color: #{theme.$light_background_text_color};
+
+  --background: #{theme.$light_background};
+  --background2: #{theme.$light_background_lighter};
+  --background3: rgba(100, 100, 100, 0.5);
+
+  &.dark {
+    --text-color: #{theme.$dark_background_text_color};
+
+    --background: #{theme.$dark_background};
+    --background2: #{theme.$dark_background_darker};
+    --background3: rgba(0, 0, 0, 0.5);
+  }
+}
+
+html {
+  --accent-color: #{theme.$red};
+
+  &.accent-red {
+    --accent-color: #{theme.$red};
+  }
+
+  &.accent-blue {
+    --accent-color: #{theme.$blue};
+  }
+
+  &.accent-orange {
+    --accent-color: #{theme.$orange};
+  }
+
+  &.accent-green {
+    --accent-color: #{theme.$green};
+  }
+}
+
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+input,
+div {
+  color: var(--text-color);
+}

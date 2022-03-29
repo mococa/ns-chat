@@ -10,7 +10,7 @@
   width: 100%;
   flex: 1;
 
-  background-color: theme.$background;
+  background-color: var(--background);
 
   @media (max-width: 600px) {
     padding: 8px;

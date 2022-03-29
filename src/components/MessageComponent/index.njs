@@ -3,6 +3,7 @@ import Nullstack from 'nullstack';
 
 // Helpers
 import { formatDate } from '../../helpers/formatDate';
+import { createAvatar } from '../../helpers/createAvatar';
 
 // Styles
 import './styles.scss';
@@ -15,19 +16,19 @@ class MessageComponent extends Nullstack {
     message.scrollIntoView({ behavior: 'smooth' });
   }
 
-  render({ author, text, at, audioSrc, file }) {
+  render({ author, text, at, audioSrc, attachment }) {
     return (
       <div class="message">
-        <img src={author.img} alt={author.name} />
+        <img src={createAvatar(author.avatar)} alt={author.username} />
         <div class="message-content">
           <strong>
-            {author.name}
+            {author.username}
             <span class="message-time">{formatDate(at)}</span>
           </strong>
           <span>{text}</span>
           {audioSrc && <audio controls src={audioSrc} />}
-          {file && (
-            <a href={file} target="_blank" rel="noopener noreferrer">
+          {attachment && (
+            <a href={attachment} target="_blank" rel="noopener noreferrer">
               Attachment
             </a>
           )}
