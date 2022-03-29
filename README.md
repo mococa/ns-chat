@@ -13,6 +13,9 @@ This is a fullstack chat application. It's still under development and I've been
   - axios
   - socket.io
   - socket.io-client
+  - prisma
+  - @prisma/client
+  - bcryptjs
 
 #### Hosting
   - This project is currently hosted on [Replit](https://replit.com)
