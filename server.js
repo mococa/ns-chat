@@ -21,6 +21,7 @@ context.start = async function start() {
       data: {
         id: '2642d33b-692e-45e8-9d03-c0d3f5f38e31',
         name: 'General',
+        secret: false,
       },
     });
   }
