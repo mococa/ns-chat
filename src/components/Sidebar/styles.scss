@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
 
-  background-color: theme.$primary;
+  background-color: var(--accent-color);
   color: theme.$white;
 
   width: 20%;

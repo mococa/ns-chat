@@ -1,9 +1,9 @@
 // External
 import Nullstack from 'nullstack';
-import { createAvatar } from '../../helpers/createAvatar';
 
 // Helpers
 import { formatDate } from '../../helpers/formatDate';
+import { createAvatar } from '../../helpers/createAvatar';
 
 // Styles
 import './styles.scss';

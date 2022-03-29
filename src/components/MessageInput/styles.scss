@@ -11,11 +11,11 @@
 
   padding: 4px 36px 4px 0;
 
-  background: $white;
+  background: var(--background2);
 
   border-radius: 12px;
 
-  box-shadow: 0px 2px 4px rgba(100, 100, 100, 0.5);
+  box-shadow: 0px 2px 4px var(--background3);
 
   input {
     flex: 1;
@@ -30,7 +30,7 @@
 
     font-size: 1rem;
 
-    background: $white;
+    background: transparent;
   }
 
   audio {

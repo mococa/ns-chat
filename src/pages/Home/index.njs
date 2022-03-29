@@ -6,6 +6,9 @@ import { v4 } from 'uuid';
 // Components
 import Input from '../../components/Input';
 
+// Helpers
+import { createAvatar } from '../../helpers/createAvatar';
+
 // Styles
 import './styles.scss';
 
@@ -15,6 +18,21 @@ class Home extends Nullstack {
     avatars: [v4()],
     selectedAvatarIndex: 0,
   };
+
+  // On first render
+  async hydrate() {
+    try {
+      if (sessionStorage.getItem('user')) {
+        JSON.parse(sessionStorage.getItem('user'));
+
+        //? Redirects back to General room if user is logged in
+        this.handleRedirect();
+      }
+    } catch (error) {
+      console.error(error);
+      sessionStorage.removeItem('user');
+    }
+  }
 
   // Server-side methods
   static async onLogin({ database, values }) {
@@ -94,7 +112,11 @@ class Home extends Nullstack {
   }
 
   // Handlers
-  async handleSignUp({ event, router }) {
+  handleRedirect() {
+    document.location.href = '/chat/2642d33b-692e-45e8-9d03-c0d3f5f38e31';
+  }
+
+  async handleSignUp({ event }) {
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
@@ -103,15 +125,18 @@ class Home extends Nullstack {
     const createdAccount = await this.onCreateAccount({ values });
     if (createdAccount.error) return alert(createdAccount.error.message);
     sessionStorage.setItem('user', JSON.stringify(createdAccount));
-    router.path = '/chat/General';
+
+    this.handleRedirect();
   }
-  async handleLogin({ event, router }) {
+
+  async handleLogin({ event }) {
     event?.preventDefault();
     const values = Object.fromEntries(new FormData(event?.target));
     const account = await this.onLogin({ values });
     if (account.error) return alert(account.error.message);
     sessionStorage.setItem('user', JSON.stringify(account));
-    router.path = '/chat/General';
+
+    this.handleRedirect();
   }
 
   handleGenerateAvatar() {
@@ -131,9 +156,7 @@ class Home extends Nullstack {
     return (
       <img
         onclick={this.handleGenerateAvatar}
-        src={`https://avatars.dicebear.com/api/adventurer/${
-          this.state.avatars[this.state.selectedAvatarIndex]
-        }.svg?scale=90&translateY=4`}
+        src={createAvatar(this.state.avatars[this.state.selectedAvatarIndex])}
       />
     );
   }

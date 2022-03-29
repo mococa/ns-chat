@@ -27,6 +27,19 @@ class ChatsPage extends Nullstack {
     this.state.socket?.close();
   }
 
+  async initiate() {
+    await this.getIntoRoomByUrl();
+  }
+
+  async getIntoRoomByUrl(context) {
+    const id = context.params?.room;
+    const room = id
+      ? await this.findRoom({ id })
+      : await this.getRooms().then((rooms) => rooms[0]);
+
+    this.state.selectedRoom = room;
+  }
+
   // On First Render
   async hydrate(context) {
     try {
@@ -41,7 +54,6 @@ class ChatsPage extends Nullstack {
       const rooms = await this.getRooms();
       this.state.rooms = rooms;
 
-      this.state.selectedRoom = rooms[0];
       this.state.user = user;
 
       await this.handleClientJoinRoom({ room: this.state.selectedRoom });
@@ -52,17 +64,22 @@ class ChatsPage extends Nullstack {
   }
 
   // Server-side methods
-  static async createRoom({ database, roomName }) {
+  static async createRoom({ database, roomName, secret = false }) {
     const createdRoom = await database.room.create({
       data: {
-        name: roomName,
+        name: secret ? 'Secret Room' : roomName,
+        secret,
       },
     });
     return createdRoom;
   }
 
   static async getRooms({ database }) {
-    return await database.room.findMany();
+    return await database.room.findMany({ where: { secret: false } });
+  }
+
+  static async findRoom({ database, id }) {
+    return await database.room.findUnique({ where: { id } });
   }
 
   static async getMessages({ database, roomId }) {
@@ -93,7 +110,6 @@ class ChatsPage extends Nullstack {
 
   static async joinRoom(context) {
     if (!context.room) return;
-    const roomName = context.room?.name;
     const roomId = context.room?.id;
 
     const messages = await this.getRoomMessages({
@@ -102,8 +118,7 @@ class ChatsPage extends Nullstack {
     });
 
     if (!context.messageList) context.messageList = {};
-    if (!context.messageList[roomName])
-      context.messageList[roomName] = messages;
+    if (!context.messageList[roomId]) context.messageList[roomId] = messages;
 
     if (context.io) return;
 
@@ -113,13 +128,13 @@ class ChatsPage extends Nullstack {
 
       socket.on('join room', (room) => {
         socket.join(room.id);
-        socket.emit('joined', context.messageList[room.name]);
+        socket.emit('joined', context.messageList[room.id]);
       });
 
       socket.on('create room', (room, secret) => {
         if (!secret) socket.broadcast.emit('new room', room);
         socket.join(room.id);
-        socket.emit('joined', context.messageList[room.name]);
+        socket.emit('joined', context.messageList[room.id]);
       });
 
       socket.on('send message', async ({ message, room }) => {
@@ -137,7 +152,7 @@ class ChatsPage extends Nullstack {
           },
         });
 
-        context.messageList[room.name].push(createdMessage);
+        context.messageList[room.id].push(createdMessage);
         socket.to(room.id).emit('new message', createdMessage);
       });
     });
@@ -185,11 +200,12 @@ class ChatsPage extends Nullstack {
   }
 
   async handleCreateRoom({ roomName, secret = false }) {
-    if (!secret) {
-      const createdRoom = await this.createRoom({
-        roomName,
-      });
+    const createdRoom = await this.createRoom({
+      roomName,
+      secret,
+    });
 
+    if (!secret) {
       this.state.socket.emit('create room', createdRoom, secret);
 
       const rooms = [...this.state.rooms, createdRoom];
@@ -197,10 +213,11 @@ class ChatsPage extends Nullstack {
       this.state.rooms = [...new Set(rooms.map((room) => room.id))].map((id) =>
         rooms.find((room) => room.id === id)
       );
-      this.state.selectedRoom = createdRoom;
-
-      await this.handleClientJoinRoom({ room: createdRoom });
     }
+
+    this.state.selectedRoom = createdRoom;
+
+    await this.handleClientJoinRoom({ room: createdRoom });
   }
 
   handleCloseDrawer() {

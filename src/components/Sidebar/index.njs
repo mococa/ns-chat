@@ -59,7 +59,7 @@ class Sidebar extends Nullstack {
             </RoundButton>
           </header>
           <div class="room-list">
-            {rooms.map((room) => (
+            {rooms?.map((room) => (
               <div
                 class="room text-button"
                 onclick={() => onChangeRoom({ room })}

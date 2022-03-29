@@ -7,7 +7,7 @@ import Messages from '../MessageList';
 import RoundButton from '../RoundButton';
 
 // Icons
-import Burger from '../../assets/icons/burger.njs';
+import Burger from '../../assets/icons/burger';
 
 // Styles
 import './styles.scss';
@@ -49,7 +49,7 @@ class Chat extends Nullstack {
         <RoundButton onclick={onOpenDrawer}>
           <Burger />
         </RoundButton>
-        <b>{room}</b>
+        <b>{room.name}</b>
       </header>
     );
   }

@@ -11,7 +11,7 @@
 
 .signup-form {
   height: 100%;
-  background: theme.$primary;
+  background: var(--accent-color);
 
   & > * {
     max-width: 267px;
