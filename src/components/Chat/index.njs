@@ -49,7 +49,7 @@ class Chat extends Nullstack {
         <RoundButton onclick={onOpenDrawer}>
           <Burger />
         </RoundButton>
-        <b>{room.name}</b>
+        <b>{room?.name}</b>
       </header>
     );
   }
