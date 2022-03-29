@@ -51,7 +51,7 @@ on Nullstack webpack config. You can put it in the return of the `server` functi
 
 #### Migrate your database
 
-run `yarn migrate`, and choose migration name, like "init".
+run `yarn db:migrate`, and choose migration name, like "init".
 
 #### Run the app in development mode
 
