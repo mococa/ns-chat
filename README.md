@@ -80,6 +80,19 @@ if (argv.environment === 'production') {
 
 (Around line ~225)
 
+#### Files
+
+To run it in production you will need the following folders and files:
+  - `/node_modules`
+  - `/.production`
+  - `/prisma`
+  - `/db-scripts`
+  - `/public`
+  - `package.json`
+  - `yarn.lock` or `package-lock.json`
+
+Then, run `yarn prod`. It will be listening to port 3000.
+
 ---
 
 ## Thoughts on Nullstack:
