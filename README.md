@@ -82,6 +82,8 @@ if (argv.environment === 'production') {
 
 #### Files
 
+After running `yarn build`,
+
 To run it in production you will need the following folders and files:
   - `/node_modules`
   - `/.production`
