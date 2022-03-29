@@ -24,7 +24,7 @@ model Room {
   name      String
   createdAt DateTime  @default(now())
   messages  Message[]
-  secret    Boolean   @default(false)
+  secret    Boolean?   @default(false)
 }
 
 model Message {
