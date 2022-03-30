@@ -24,8 +24,8 @@ class Application extends Nullstack {
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (!user?.id) return;
         context.user = user;
-        if(context.path === '/'){
-          context.path = '/chat'
+        if (context.path === '/') {
+          context.path = '/chat';
         }
       }
     } catch (error) {
