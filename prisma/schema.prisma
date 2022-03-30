@@ -17,6 +17,14 @@ model User {
   password  String
   createdAt DateTime  @default(now())
   messages  Message[]
+  dms       Dm[]
+}
+
+model Dm {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  users     User[]
+  messages  Message[]
 }
 
 model Room {
@@ -24,7 +32,7 @@ model Room {
   name      String
   createdAt DateTime  @default(now())
   messages  Message[]
-  secret    Boolean?   @default(false)
+  secret    Boolean?  @default(false)
 }
 
 model Message {
@@ -35,6 +43,8 @@ model Message {
   audio      String?
   attachment String?
   createdAt  DateTime @default(now())
-  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  roomId     String
+  room       Room?     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId     String?
+  dm         Dm?      @relation(fields: [dmId], references: [id])
+  dmId       String?
 }
