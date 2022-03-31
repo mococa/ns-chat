@@ -126,7 +126,7 @@ Then, run `yarn prod`. It will be listening to port 3000.
   - [ ] Implement theming
   - [ ] Increase security (Not use sessionStorage)
   - [ ] Implement profile pages
-  - [ ] Implement DMs
+  - [x] Implement DMs
 
 
 ## Learn more about Nullstack
