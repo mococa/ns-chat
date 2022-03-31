@@ -7,6 +7,9 @@ import { io } from 'socket.io-client';
 import Chat from '../../components/Chat';
 import Sidebar from '../../components/Sidebar';
 
+// Helpers
+import { changeUrl } from '../../helpers/changeUrl';
+
 // Styles
 import './styles.scss';
 
@@ -33,10 +36,13 @@ class ChatsPage extends Nullstack {
 
   async getIntoRoomByUrl(context) {
     const id = context.params?.room;
+    console.log(`[${new Date().toLocaleTimeString()}] fetching room by url...`);
     const room = id
       ? await this.findRoom({ id })
       : await this.getRooms().then((rooms) => rooms[0]);
-
+    console.log(
+      `[${new Date().toLocaleTimeString()}] visiting ${room.name} by url`
+    );
     this.state.selectedRoom = room;
   }
 
@@ -82,59 +88,59 @@ class ChatsPage extends Nullstack {
     return await database.room.findUnique({ where: { id } });
   }
 
-  static async getMessages({ database, roomId }) {
-    return await database.message.findMany({
-      where: { roomId },
-      include: { author: { select: { username: true, avatar: true } } },
-    });
-  }
-
   static async createMessage({ database, message }) {
     return database.message.create({
       data: message,
-      include: { author: { select: { username: true, avatar: true } } },
+      include: {
+        author: { select: { id: true, username: true, avatar: true } },
+      },
     });
   }
 
-  static async getRoomMessages({ database, roomId }) {
-    const room = await database.room.findUnique({
-      where: { id: roomId },
+  static async getRoomMessages({ messageList, database, roomId }) {
+    const messages = await database.message.findMany({
+      take: -20,
+      where: { roomId },
       include: {
-        messages: {
-          include: { author: { select: { username: true, avatar: true } } },
+        author: {
+          select: { id: true, username: true, avatar: true },
         },
       },
     });
-    return room.messages;
+    if (!messageList)
+      messageList = {
+        [roomId]: messages,
+      };
+    return messages;
   }
 
   static async joinRoom(context) {
-    if (!context.room) return;
-    const roomId = context.room?.id;
-
-    const messages = await this.getRoomMessages({
-      database: context.database,
-      roomId,
-    });
-
     if (!context.messageList) context.messageList = {};
-    if (!context.messageList[roomId]) context.messageList[roomId] = messages;
-
     if (context.io) return;
 
-    const ws = new Server(context.server, { cors: { origin: '*' } }); // Todo: Change origin on deployed app
+    const ws = new Server(context.server, {
+      path: '/rooms',
+      connectTimeout: 1000,
+      cors: { origin: '*' },
+    }); // Todo: Change origin on deployed app
     ws.on('connect', async (socket) => {
       console.log(`new connection: ${socket.id}`);
 
-      socket.on('join room', (room) => {
+      socket.on('join room', async (room) => {
         socket.join(room.id);
+        if (!context.messageList[room.id]?.length)
+          context.messageList[room.id] = await this.getRoomMessages({
+            database: context.database,
+            roomId: room.id,
+          });
         socket.emit('joined', context.messageList[room.id]);
       });
 
       socket.on('create room', (room, secret) => {
         if (!secret) socket.broadcast.emit('new room', room);
         socket.join(room.id);
-        socket.emit('joined', context.messageList[room.id]);
+        context.messageList[room.id] = [];
+        socket.emit('joined', []);
       });
 
       socket.on('send message', async ({ message, room }) => {
@@ -152,7 +158,7 @@ class ChatsPage extends Nullstack {
           },
         });
 
-        context.messageList[room.id].push(createdMessage);
+        context.messageList[room.id]?.push(createdMessage);
         socket.to(room.id).emit('new message', createdMessage);
       });
     });
@@ -161,13 +167,11 @@ class ChatsPage extends Nullstack {
   }
 
   // Handlers
-  async handleClientJoinRoom({ room, environment }) {
+  async handleClientJoinRoom({ room }) {
     this.state.messageList = [];
 
-    const { production } = environment;
-    const socket =
-      this.state.socket ||
-      io(production ? 'https://nschat.ml/' : 'http://localhost:3000');
+    //const { production } = environment;
+    const socket = this.state.socket || io.connect({ path: '/rooms' });
 
     socket.on('new message', (message) => {
       if (this.state.messageList.map(({ id }) => id).includes(message.id))
@@ -187,7 +191,7 @@ class ChatsPage extends Nullstack {
 
     await this.joinRoom({ room });
 
-    window.history.pushState(room.id, 'Chat', `/chat/${room.id}`);
+    changeUrl(room.id, `/chat/${room.id}`);
 
     socket.emit('join room', this.state.selectedRoom);
 
@@ -241,7 +245,6 @@ class ChatsPage extends Nullstack {
         />
         <Chat
           currentRoom={this.state.selectedRoom}
-          username={this.state.socket?.id}
           messageList={this.state.messageList}
           onSendChat={(message) => {
             this.state.socket.emit('send message', {

@@ -19,21 +19,6 @@ class Home extends Nullstack {
     selectedAvatarIndex: 0,
   };
 
-  // On first render
-  async hydrate() {
-    try {
-      if (sessionStorage.getItem('user')) {
-        JSON.parse(sessionStorage.getItem('user'));
-
-        //? Redirects back to General room if user is logged in
-        this.handleRedirect();
-      }
-    } catch (error) {
-      console.error(error);
-      sessionStorage.removeItem('user');
-    }
-  }
-
   // Server-side methods
   static async onLogin({ database, values }) {
     const { username, password } = values;
@@ -116,7 +101,8 @@ class Home extends Nullstack {
     document.location.href = '/chat/2642d33b-692e-45e8-9d03-c0d3f5f38e31';
   }
 
-  async handleSignUp({ event }) {
+  async handleSignUp(context) {
+    const { event } = context;
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
@@ -129,13 +115,14 @@ class Home extends Nullstack {
     this.handleRedirect();
   }
 
-  async handleLogin({ event }) {
+  async handleLogin(context) {
+    const { event } = context;
     event?.preventDefault();
     const values = Object.fromEntries(new FormData(event?.target));
     const account = await this.onLogin({ values });
     if (account.error) return alert(account.error.message);
     sessionStorage.setItem('user', JSON.stringify(account));
-
+    context.user = account;
     this.handleRedirect();
   }
 

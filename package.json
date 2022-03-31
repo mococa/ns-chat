@@ -19,8 +19,9 @@
     "lint": "eslint --ext .njs --ext .js src",
     "prettier": "prettier --check src",
     "prettier:fix": "prettier --write src",
-    "migrate": "npx prisma migrate dev",
-    "studio": "npx prisma studio"
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
+    "db:drop": "node ./db-scripts/drop.js"
   },
   "dependencies": {
     "@prisma/client": "^3.11.1",

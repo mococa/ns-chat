@@ -9,6 +9,11 @@ import { createAvatar } from '../../helpers/createAvatar';
 import './styles.scss';
 
 class MessageComponent extends Nullstack {
+  // States
+  state = {
+    showPopup: false,
+  };
+
   // On First Render
   hydrate({ self }) {
     const message = self.element;
@@ -16,12 +21,76 @@ class MessageComponent extends Nullstack {
     message.scrollIntoView({ behavior: 'smooth' });
   }
 
-  render({ author, text, at, audioSrc, attachment }) {
+  static async createSendDm({ database, usersIDs }) {
+    const dm = await database.dm
+      .findMany({
+        where: {
+          users: { every: { OR: usersIDs.map((id) => ({ id })) } },
+        },
+      })
+      .then((dms) => dms[0]);
+
+    if (dm) return dm;
+
+    return await database.dm.create({
+      data: {
+        users: { connect: usersIDs.map((id) => ({ id })) },
+        messages: {
+          create: [
+            {
+              authorId: usersIDs[1],
+              text: 'hey',
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  // Handlers
+  handleHidePopup({ clearSelection }) {
+    clearSelection();
+  }
+
+  async handleCreateDM({ author, user, router }) {
+    const dmCreated = await this.createSendDm({
+      usersIDs: [author.id, user.id],
+    });
+    router.path = `/dm/${dmCreated.id}`;
+  }
+
+  renderPopup(context) {
+    const { author, user } = context;
+    const isDM = window.location.pathname.includes('/dm');
+    return (
+      <div class="message-popup" onclick={this.handleHidePopup}>
+        <header>{author.username}</header>
+        <footer>
+          {author.id !== user.id && !isDM && (
+            <button
+              onclick={async () => {
+                // Handle create dm message
+                this.handleCreateDM();
+              }}
+            >
+              Send hi!
+            </button>
+          )}
+        </footer>
+      </div>
+    );
+  }
+
+  render({ author, text, at, audioSrc, attachment, selected, onSelect }) {
     return (
       <div class="message">
-        <img src={createAvatar(author.avatar)} alt={author.username} />
+        <img
+          src={createAvatar(author.avatar)}
+          alt={author.username}
+          onclick={onSelect}
+        />
         <div class="message-content">
-          <strong>
+          <strong onclick={onSelect}>
             {author.username}
             <span class="message-time">{formatDate(at)}</span>
           </strong>
@@ -33,6 +102,7 @@ class MessageComponent extends Nullstack {
             </a>
           )}
         </div>
+        {selected && <Popup />}
       </div>
     );
   }
