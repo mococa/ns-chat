@@ -27,6 +27,7 @@ class Chat extends Nullstack {
 
     const payload = () => ({
       authorId: user.id,
+      author: user,
       data: messageData,
     });
 
@@ -39,6 +40,7 @@ class Chat extends Nullstack {
       attachment: messageData.attachment || '',
       createdAt: new Date(),
     });
+
     return payload();
   }
 

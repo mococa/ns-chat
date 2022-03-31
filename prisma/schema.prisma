@@ -43,7 +43,7 @@ model Message {
   audio      String?
   attachment String?
   createdAt  DateTime @default(now())
-  room       Room?     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  room       Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId     String?
   dm         Dm?      @relation(fields: [dmId], references: [id])
   dmId       String?

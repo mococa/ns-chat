@@ -1,28 +1,52 @@
 import Nullstack from 'nullstack';
+import { Server } from 'socket.io';
+import { io } from 'socket.io-client';
 import Chat from '../../components/Chat';
 import Sidebar from '../../components/Sidebar';
 
 class DMs extends Nullstack {
   state = {
+    socket: null,
     dmList: [],
-    messageList: [],
+    messageList: {},
     drawerOpen: false,
     dming: null,
   };
+
+  terminate() {
+    this.state.socket?.disconnect();
+    this.state.socket?.close();
+  }
 
   async initiate({ params }) {
     const id = params.id;
     if (id) {
       const dm = await this.getDmById({ id });
       this.state.dming = dm;
-      this.state.messageList = dm.messages;
+      this.state.messageList[dm.id] = dm.messages;
     }
+  }
+
+  createSocket({ user }) {
+    if (this.state.socket) return;
+
+    const socket = io({ path: '/dms' });
+
+    socket.on(user.id, (payload) => {
+      if (!this.state.messageList[payload.dmId])
+        this.state.messageList[payload.dmId] = [];
+      this.state.messageList[payload.dmId].push(payload);
+    });
+
+    this.state.socket = socket;
   }
 
   async hydrate() {
     try {
       const user = JSON.parse(sessionStorage.getItem('user'));
-      this.state.dmList = await this.getDMs({ id: user.id });
+      this.createSocket({ user });
+      this.state.dmList = await this.getDMs({ userId: user.id });
+      await this.listenDMs({ userId: user.id });
     } catch (error) {
       console.error(error);
     }
@@ -48,7 +72,9 @@ class DMs extends Nullstack {
     return await database.dm.findMany({
       where: {
         users: {
-          has: userId,
+          some: {
+            id: userId,
+          },
         },
       },
       include: {
@@ -75,7 +101,36 @@ class DMs extends Nullstack {
         attachment: message.data.attachment || '',
         dmId: dm.id,
       },
+      include: {
+        author: { select: { id: true, username: true, avatar: true } },
+      },
     });
+  }
+
+  static async listenDMs(context) {
+    if (context.dmIO) return;
+    const ws = new Server(context.server, { path: '/dms' });
+    ws.on('connect', (socket) => {
+      console.log(`New DM connection: ${socket.id}`);
+      socket.on(
+        'dm',
+        ({ id, dmId, author, text, audio, attachment, createdAt, to }) => {
+          const message = { text, audio, attachment };
+          ws.emit(to, {
+            id,
+            ...message,
+            author,
+            dmId,
+            createdAt: new Date(createdAt),
+          });
+        }
+      );
+    });
+    /*({ dmId, to, from, message }) => {
+        ws.emit(to, { dmId, from, message });
+      });
+    });*/
+    context.dmIO = ws;
   }
 
   handleOpenDrawer() {
@@ -88,13 +143,20 @@ class DMs extends Nullstack {
 
   async handleSelectDM({ dm }) {
     this.state.dming = dm;
-    this.state.messageList = await this.getDmById({ id: dm.id }).then(
+    this.state.messageList[dm.id] = await this.getDmById({ id: dm.id }).then(
       ({ messages }) => messages
     );
   }
 
-  async handleSendDM({ message }) {
-    this.createDmMessage({ message, dm: this.state.dming });
+  async handleSendDM({ message, user: me }) {
+    const to = this.state.dming?.users.find((user) => user.id !== me.id)?.id;
+    // const from = me.id;
+    const createdMessage = await this.createDmMessage({
+      message,
+      dm: this.state.dming,
+    });
+
+    this.state.socket.emit('dm', { ...createdMessage, to });
   }
 
   render() {
@@ -109,7 +171,7 @@ class DMs extends Nullstack {
         {this.state.dming !== null && (
           <Chat
             currentRoom={this.state.dming}
-            messageList={this.state.messageList}
+            messageList={this.state.messageList[this.state.dming.id]}
             onSendChat={(message) => {
               this.handleSendDM({ message });
             }}

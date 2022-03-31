@@ -5,7 +5,6 @@ import { io } from 'socket.io-client';
 
 // Components
 import Chat from '../../components/Chat';
-import DmBubble from '../../components/DmBubble';
 import Sidebar from '../../components/Sidebar';
 
 // Helpers
@@ -120,7 +119,7 @@ class ChatsPage extends Nullstack {
     if (context.io) return;
 
     const ws = new Server(context.server, {
-      //transports: ['websocket', 'polling'],
+      path: '/rooms',
       connectTimeout: 1000,
       cors: { origin: '*' },
     }); // Todo: Change origin on deployed app
@@ -172,7 +171,7 @@ class ChatsPage extends Nullstack {
     this.state.messageList = [];
 
     //const { production } = environment;
-    const socket = this.state.socket || io.connect();
+    const socket = this.state.socket || io.connect({ path: '/rooms' });
 
     socket.on('new message', (message) => {
       if (this.state.messageList.map(({ id }) => id).includes(message.id))
@@ -257,7 +256,6 @@ class ChatsPage extends Nullstack {
           onOpenDrawer={this.handleOpenDrawer}
           onCloseDrawer={this.handleCloseDrawer}
         />
-        <DmBubble />
       </div>
     );
   }

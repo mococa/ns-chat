@@ -101,7 +101,8 @@ class Home extends Nullstack {
     document.location.href = '/chat/2642d33b-692e-45e8-9d03-c0d3f5f38e31';
   }
 
-  async handleSignUp({ event }) {
+  async handleSignUp(context) {
+    const { event } = context;
     event?.preventDefault();
     const values = {
       ...Object.fromEntries(new FormData(event?.target)),
